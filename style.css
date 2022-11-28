@@ -1,0 +1,45 @@
+canvas {
+  display: block;
+  outline: 1px solid black;
+  /* background-image: url("bodyoutline.gif"); */
+  background-size: cover;
+}
+
+.toolbar {
+  height: 50px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  flex-direction: row;
+  list-style-type: none;
+}
+
+#linesize {
+  border-radius: 50%;
+  background-color: red;
+  height: 15px;
+  width: 15px;
+  margin: auto;
+}
+
+#lineview {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hiddenimage {
+  display: none;
+}
+
+.mainframe {
+  display: flex;
+  flex-direction: row;
+  flex
+}
+
+.triggertypecontainer {
+  display: flex;
+}
