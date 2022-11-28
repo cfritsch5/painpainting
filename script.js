@@ -32,8 +32,8 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
 // draw background body outline
-  let img = document.getElementById('teethdiagram2');
-  // let img = document.getElementById('outlineimg');
+  // let img = document.getElementById('teethdiagram2');
+  let img = document.getElementById('outlineimg');
   img.addEventListener('load', (e) => {
       cntx.drawImage(img, 0, 0,canvas.width, canvas.height);
       imgdata.push(cntx.getImageData(0,0,canvas.width, canvas.height));
