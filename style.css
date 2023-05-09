@@ -3,6 +3,8 @@ canvas {
   outline: 1px solid black;
   /* background-image: url("bodyoutline.gif"); */
   background-size: cover;
+  /* width: 700px; */
+  /* height: 600px; */
 }
 
 .toolbar {
@@ -34,12 +36,47 @@ canvas {
   display: none;
 }
 
-.mainframe {
+
+/* .triggertypecontainer {
   display: flex;
-  flex-direction: row;
-  flex
+} */
+
+
+#triggertypes {
+  display: none;
 }
 
-.triggertypecontainer {
+/* .triggerlabel {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+} */
+
+.triggerradio {
+  display: none;
+  flex-direction: column;
+} 
+
+.better {
+  /* background-image: url("images/better.jpg"); */
+}
+
+.worse {
+  /* background-image: url("images/worse.jpg"); */
+}
+.better,.worse {
+  background-position: center; /* Center the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  width: 10px;
+  height: 10px;
+}
+
+.radio {
+  /* opacity: 0; */
+}
+
+.triggerradio input {
+  /* border: 10px solid red; */
+  /* background-color: aqua; */
 }

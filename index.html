@@ -31,32 +31,73 @@
         <button type="button" name="Save Image" id="savebutton">Save</button>
       </li>
     </ul>
-</div>
+  </div>
   <div class="mainframe">
     <div class="">
-      <canvas id="canvas" width="760" height="700"></canvas>
-      <img src="bodyoutline.gif" alt="" class="hiddenimage">
-      <img src="teethdiagram2.jpg" alt="" class="hiddenimage">
+      <canvas id="canvas" width="600" height="600"></canvas>
+      <img src="bodyoutline.gif" id="outlineimg"calt="" class="hiddenimage">
+      <!-- <img src="teethdiagram2.jpg" alt="" class="hiddenimage"> -->
     </div>
     <div class="triggertypecontainer">
-      <button type="button" name="trigger" id="triggerbutton">triggered by</button>
-      <label for="triggertype">
-        <input type="radio" name="triggertypes" id="touch">Touch
-      </label>
-      <label for="triggertype">
-        <input type="radio" name="triggertypes" id="moving">Moving
-      </label>
-      <label for="triggertype">
-        <input type="radio" name="triggertypes" id="heat">Heat
-      </label>
-      <label for="triggertype">
-        <input type="radio" name="triggertypes" id="cold">Cold
-      </label>
-      <label for="triggertype">
-        <input type="radio" name="triggertypes" id="customradio">Custom
-        <input type="text" name="triggertypes" id="customtext">
-      </label>
+      <button type="button" name="trigger" id="trigger">Add label: symptom responds to </button>
+      <div id="triggertypes">
+        <label title="touching the area hurts, or massaging the area helps" class="triggerlabel" for="touch"> 
+          <input type="checkbox" class="checkbox" name="touch" id="touch">
+          Touch
+          <div class="triggerradio">
+            <span class="better">
+              <input class="touch better radio" type="radio" name="triggertypetouch" id="touchbetter">
+            </span>
+            <span class="worse">
+              <input class="touch worse radio" type="radio" name="triggertypetouch" checked="checked" id="touchworse">
+            </span>
+          </div>
+        </label> 
+        <label class="triggerlabel"for="triggertypemovement">
+          <input type="checkbox" class="checkbox" name="" id="movement">
+          Moving
+          <div class="triggerradio">
+            <span class="better">
+              <input class="movement better radio" type="radio" name="triggertypemovement" id="movementbetter">
+            </span>
+            <span class="worse">
+              <input class="movement worse radio radio" type="radio" name="triggertypemovement" checked="checked" id="movementworse"> 
+            </span>
+          </div>
+        </label>
+        <label class="triggerlabel" for="triggertypeheat"> 
+          <input type="checkbox" name="" id="heat">
+          Heat
+          <div class="triggerradio">
+            <span class="better"><input class="heat better radio" type="radio" name="triggertypeheat" id="heatbetter">
+              </span>
+              <span class="worse"></span><input class="heat worse radio" type="radio" name="triggertypeheat" checked="checked" id="heatworse">    
+              </span>        
+          </div>        
+        </label>
+        <label class="triggerlabel" for="triggertypecold"> 
+          <input type="checkbox" class="checkbox" name="" id="cold">
+          Cold
+          <div class="triggerradio">
+            <span class="better">
+              <input class="cold better radio" type="radio" name="triggertypecold" id="coldbetter">
+            </span>
+            <span class="worse">
+              <input class="cold worse radio" type="radio" name="triggertypecold" checked="checked" id="coldworse">        
+            </span>
+          </div>
+        </label>
+        <label class="triggerlabel" for="triggertypecustom">
+          <input type="checkbox" class="checkbox" name="triggertypecustom" id="custom">
+          Custom Text
+          <div class="triggerradio">
+            <input class="custom better radio"type="text" name="triggertypecustom" checked="checked" id="custombetter">
+            <input class="custom worse radio"type="text" name="triggertypecustom" checked="checked" id="customworse">
+          </div>
+        </label>
+      </div>
+      
     </div>
   </div>
-
+</body>
 </html>

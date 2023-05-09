@@ -1,2 +1,7 @@
+Server:
+Username	cfritsch_bastardclass
+Password	(your member password)
+IP Address  208.94.118.180
+
 command to ssh to server from terminal
 ssh cfritsch_bastardclass@ssh.phx.nearlyfreespeech.net
