@@ -147,18 +147,31 @@ document.addEventListener("DOMContentLoaded", function() {
   savebutton.addEventListener("click", () => {
     backgroundcntx.drawImage(canvas,0,0);
     const link = document.createElement("a");
-    link.download = "image.png";
+    link.download = "PainPaintingImage.png";
     link.href = backgroundcanvas.toDataURL();
     link.click();
     backgroundcntx.drawImage(img, 0, 0,canvas.width, canvas.height); //redraw to clear background img
   });
 
   //ERASE 
-  // let erasebutton = document.getElementById('erasebutton');
-  // erasebutton.addEventListener("click", ()=>{
-  //   cntx.strokeStyle = `rgb(255, 255, 255, 1)`;
-  //   isErasing = true;
-  // });
+  let erasebutton = document.getElementById('erase');
+  erasebutton.addEventListener("click", ()=>{
+    // cntx.strokeStyle = `rgb(255, 255, 255, 1)`;
+    if (erasebutton.checked) {
+      // isErasing = true;
+      cntx.globalCompositeOperation = "destination-out";  
+      cntx.strokeStyle = "rgba(255,255,255,1)";
+      
+    } else {
+
+      cntx.lineWidth = lineWidth.value;
+      cntx.globalCompositeOperation = "source-over";  
+      cntx.strokeStyle = `rgb(255, 0, 0, ${intensity.value})`; //reset to regular painting
+      // isErasing = false;
+      // erasebutton.checked = "false";
+    }
+
+  });
 
 // main drawing process listeners and functions
   canvas.addEventListener("mousedown",onStart);
@@ -196,11 +209,12 @@ document.addEventListener("DOMContentLoaded", function() {
   function onEnd() {
     if (isPainting === true) {
       isPainting = false;
-      if (isErasing === true) {
-        cntx.lineWidth = lineWidth.value;
-        cntx.strokeStyle = `rgb(255, 0, 0, ${intensity.value})`; //reset to regular painting
-        isErasing = false;
-      }
+      // if (isErasing === true) {
+        // cntx.lineWidth = lineWidth.value;
+        // cntx.globalCompositeOperation = "source-over";  
+        // cntx.strokeStyle = `rgb(255, 0, 0, ${intensity.value})`; //reset to regular painting
+        // isErasing = false;
+      // }
       path = [];
       imgdata.push(cntx.getImageData(0,0,canvas.width, canvas.height));
     }
