@@ -1,8 +1,17 @@
+.canvascontainer {
+  display: grid;
+}
+
 canvas {
   display: block;
   outline: 1px solid black;
-  background-image: url("images/bodyoutline.gif");
-  background-size: cover;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+#backgroundcanvas {
+    /* background-image: url("images/bodyoutline.png"); */
+    background-size: cover;  
 }
 
 .mainframe {

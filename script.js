@@ -1,14 +1,16 @@
 document.addEventListener("DOMContentLoaded", function() {
 
-// set up canvas
+// set up canvas(es)
+  let backgroundcanvas = document.getElementById('backgroundcanvas');
   let canvas = document.getElementById('canvas');
   let cntx = canvas.getContext("2d");
+  let backgroundcntx = backgroundcanvas.getContext("2d");
   let isPainting = false;
   let isErasing = false;
 
 // set up variables to store current path and drawing history
   let path = [];
-  let imgdata = [];
+  let imgdata = [cntx.getImageData(0,0,canvas.width, canvas.height)];
   let makebetter = new Image();
   let makesworse = new Image();
   makebetter.src = `images/makebetter.png`;
@@ -27,11 +29,10 @@ document.addEventListener("DOMContentLoaded", function() {
   intensity.addEventListener("input", (e) => {cntx.strokeStyle = `rgb(255, 0, 0, ${intensity.value})`;});
 
 // draw background body outline
-  // let img = document.getElementById('bodyoutline');
-  // img.addEventListener('load', (e) => {
-  //   cntx.drawImage(img, 0, 0,canvas.width, canvas.height);
-  //   imgdata.push(cntx.getImageData(0,0,canvas.width, canvas.height));
-  // });
+  let img = document.getElementById('bodyoutline');
+  img.addEventListener('load', (e) => {
+    backgroundcntx.drawImage(img, 0, 0,canvas.width, canvas.height); 
+  });
 
   // initialize trigger types object
   let triggers = {
@@ -144,10 +145,12 @@ document.addEventListener("DOMContentLoaded", function() {
 //SAVE
   let savebutton = document.getElementById('savebutton');
   savebutton.addEventListener("click", () => {
+    backgroundcntx.drawImage(canvas,0,0);
     const link = document.createElement("a");
     link.download = "image.png";
-    link.href = canvas.toDataURL();
+    link.href = backgroundcanvas.toDataURL();
     link.click();
+    backgroundcntx.drawImage(img, 0, 0,canvas.width, canvas.height); //redraw to clear background img
   });
 
   //ERASE 
