@@ -1,10 +1,12 @@
 canvas {
   display: block;
   outline: 1px solid black;
-  /* background-image: url("bodyoutline.gif"); */
+  background-image: url("images/bodyoutline.gif");
   background-size: cover;
-  /* width: 700px; */
-  /* height: 600px; */
+}
+
+.mainframe {
+  display: flex;
 }
 
 .toolbar {
@@ -36,34 +38,16 @@ canvas {
   display: none;
 }
 
-
-/* .triggertypecontainer {
-  display: flex;
-} */
-
-
 #triggertypes {
   display: none;
+  flex-direction: column;
 }
-
-/* .triggerlabel {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-} */
 
 .triggerradio {
   display: none;
   flex-direction: column;
 } 
 
-.better {
-  /* background-image: url("images/better.jpg"); */
-}
-
-.worse {
-  /* background-image: url("images/worse.jpg"); */
-}
 .better,.worse {
   background-position: center; /* Center the image */
   background-size: cover; /* Resize the background image to cover the entire container */
@@ -72,11 +56,6 @@ canvas {
   height: 10px;
 }
 
-.radio {
-  /* opacity: 0; */
-}
-
-.triggerradio input {
-  /* border: 10px solid red; */
-  /* background-color: aqua; */
+.showinstructions {
+  display: none;
 }
