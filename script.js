@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function() {
   let cntx = canvas.getContext("2d");
   let backgroundcntx = backgroundcanvas.getContext("2d");
   let isPainting = false;
-  let isErasing = false;
 
 // set up variables to store current path and drawing history
   let path = [];
@@ -25,8 +24,15 @@ document.addEventListener("DOMContentLoaded", function() {
   // line style controls
   let lineWidth = document.getElementById('lineWidth');
   let intensity = document.getElementById('intensity');
-  lineWidth.addEventListener("input", (e) => {cntx.lineWidth = lineWidth.value;});
-  intensity.addEventListener("input", (e) => {cntx.strokeStyle = `rgb(255, 0, 0, ${intensity.value})`;});
+  let linesize = document.getElementById("linesize");
+  lineWidth.addEventListener("input", (e) => { updateLinesize(`rgb(255, 0, 0, ${intensity.value})`); });
+  intensity.addEventListener("input", (e) => { updateLinesize(`rgb(255, 0, 0, ${intensity.value})`); });
+  function updateLinesize(color){
+    cntx.lineWidth = lineWidth.value;
+    cntx.strokeStyle = color;
+    linesize.style = `background-color: ${color}; width:${lineWidth.value}px; height:${lineWidth.value}px; opacity: ${intensity.value}`;
+  };
+
 
 // draw background body outline
   let img = document.getElementById('bodyoutline');
@@ -43,10 +49,8 @@ document.addEventListener("DOMContentLoaded", function() {
     custom: {custom:'custom'}
   };
 
-  //set up triggers event listeners, radio options, and images
-  let triggerbutton = document.getElementById('trigger');
-  let triggertypebox = document.getElementById("triggertypes");
-
+  //set up trigger event listeners, radio options, and images
+  //set up triggers object and elements 
   for (let key in triggers) {
     triggers[key].icon = new Image();
     triggers[key].icon.src = `images/${key}icon.png`;
@@ -71,7 +75,10 @@ document.addEventListener("DOMContentLoaded", function() {
         triggers[key].radio.style.display = 'none';
       };
     });
-  };
+  }; //end of for key in triggers loop
+
+  let triggerbutton = document.getElementById('trigger');
+  let triggertypebox = document.getElementById("triggertypes");
 
   triggerbutton.addEventListener('click', (e) => {
     canvas.removeEventListener("touchstart",onStart);
@@ -156,19 +163,14 @@ document.addEventListener("DOMContentLoaded", function() {
   //ERASE 
   let erasebutton = document.getElementById('erase');
   erasebutton.addEventListener("click", ()=>{
-    // cntx.strokeStyle = `rgb(255, 255, 255, 1)`;
     if (erasebutton.checked) {
-      // isErasing = true;
       cntx.globalCompositeOperation = "destination-out";  
       cntx.strokeStyle = "rgba(255,255,255,1)";
-      
+      updateLinesize('rgba(255,255,255,1)');
     } else {
-
       cntx.lineWidth = lineWidth.value;
       cntx.globalCompositeOperation = "source-over";  
       cntx.strokeStyle = `rgb(255, 0, 0, ${intensity.value})`; //reset to regular painting
-      // isErasing = false;
-      // erasebutton.checked = "false";
     }
 
   });
@@ -209,12 +211,6 @@ document.addEventListener("DOMContentLoaded", function() {
   function onEnd() {
     if (isPainting === true) {
       isPainting = false;
-      // if (isErasing === true) {
-        // cntx.lineWidth = lineWidth.value;
-        // cntx.globalCompositeOperation = "source-over";  
-        // cntx.strokeStyle = `rgb(255, 0, 0, ${intensity.value})`; //reset to regular painting
-        // isErasing = false;
-      // }
       path = [];
       imgdata.push(cntx.getImageData(0,0,canvas.width, canvas.height));
     }
