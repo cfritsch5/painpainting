@@ -71,3 +71,7 @@ canvas {
 .showinstructions {
   display: none;
 }
+
+#legendcanvas {
+  pointer-events: none;
+}

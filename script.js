@@ -2,9 +2,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // set up canvas(es)
   let backgroundcanvas = document.getElementById('backgroundcanvas');
+  let backgroundcntx = backgroundcanvas.getContext("2d");
   let canvas = document.getElementById('canvas');
   let cntx = canvas.getContext("2d");
-  let backgroundcntx = backgroundcanvas.getContext("2d");
+  let legendcanvas = document.getElementById('legendcanvas');
+  let legendcntx = legendcanvas.getContext("2d");
   let isPainting = false;
 
 // set up variables to store current path and drawing history
@@ -15,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
   makebetter.src = `images/makebetter.png`;
   makesworse.src = `images/makesworse.png`;
 
-// initializing line style
+// initializing line style, function, & listeners
   cntx.lineCap = 'round';
   cntx.lineJoin = "round";
   cntx.lineWidth = 15;
@@ -161,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function() {
   savebutton.addEventListener("click", () => {
     backgroundcntx.globalAlpha = 0.9;
     backgroundcntx.drawImage(canvas,0,0);
-    const link = document.createElement("a");
+    const link = document.createElement("link");
     link.download = "PainPaintingImage.png";
     link.href = backgroundcanvas.toDataURL();
     link.click();
@@ -229,8 +231,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
   //drawing triggers functions
   function drawtrigger(e) {
-    cntx.lineWidth = 1;
-    cntx.strokeStyle = `rgb(0, 0, 0, 1)`;
+    legendcntx.lineWidth = 1;
+    legendcntx.strokeStyle = `rgb(0, 0, 0, 1)`;
     path.push([e.offsetX,e.offsetY]);
   }
 
@@ -247,35 +249,35 @@ document.addEventListener("DOMContentLoaded", function() {
     let offset = 20;
     let v = vectorizePath(A,B,offset);
 
-    cntx.lineTo(e.offsetX,e.offsetY);
-    cntx.beginPath();
-    cntx.moveTo(A[0],A[1]);
-    cntx.lineTo(B[0],B[1]);
-    cntx.stroke();
+    legendcntx.lineTo(e.offsetX,e.offsetY);
+    legendcntx.beginPath();
+    legendcntx.moveTo(A[0],A[1]);
+    legendcntx.lineTo(B[0],B[1]);
+    legendcntx.stroke();
     let radius = 10;
-    cntx.moveTo(v[0]+radius,v[1]);
+    legendcntx.moveTo(v[0]+radius,v[1]);
     let triggerspacing = 0;
     for (let key in triggers){
       if (triggers[key][key]=== 'custom' && triggers[key].element.checked) {        
-        cntx.font = "16px Arial";
-        cntx.fillText(document.getElementById('customtext').value, v[0]-13.5+triggerspacing,v[1]-13.5)
+        legendcntx.font = "16px Arial";
+        legendcntx.fillText(document.getElementById('customtext').value, v[0]-13.5+triggerspacing,v[1]-13.5)
       } else {
         if(triggers[key].element.checked) {
 
-          cntx.drawImage(triggers[key].icon, v[0]-13.5+triggerspacing,v[1]-13.5,25,25);
+          legendcntx.drawImage(triggers[key].icon, v[0]-13.5+triggerspacing,v[1]-13.5,25,25);
           triggerspacing = triggerspacing + offset;
 
           if (triggers[key].radiobetter.checked) {
-            cntx.drawImage(makebetter, v[0]+triggerspacing-36,v[1]-12,40,40);
+            legendcntx.drawImage(makebetter, v[0]+triggerspacing-36,v[1]-12,40,40);
           } else if (triggers[key].radioworse.checked) {
-            cntx.drawImage(makesworse, v[0]+triggerspacing-36,v[1]-12,40,40);
+            legendcntx.drawImage(makesworse, v[0]+triggerspacing-36,v[1]-12,40,40);
           }
         } 
           
       };
     };
 
-    cntx.stroke();
+    legendcntx.stroke();
     path = [];
 
     imgdata.push(cntx.getImageData(0,0,canvas.width, canvas.height));
