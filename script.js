@@ -171,6 +171,7 @@ document.addEventListener("DOMContentLoaded", function() {
       cntx.lineWidth = lineWidth.value;
       cntx.globalCompositeOperation = "source-over";  
       cntx.strokeStyle = `rgb(255, 0, 0, ${intensity.value})`; //reset to regular painting
+      updateLinesize(`rgb(255, 0, 0, ${intensity.value})`);
     }
 
   });
