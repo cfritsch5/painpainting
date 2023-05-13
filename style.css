@@ -8,6 +8,7 @@ canvas {
   grid-column: 1;
   grid-row: 1;
   cursor: crosshair;
+  opacity: 0.9;
 }
 
 #backgroundcanvas {
@@ -30,7 +31,7 @@ canvas {
 
 #linesize {
   border-radius: 50%;
-  background-color: red;
+  background-color: rgb(255, 123, 123);
   height: 15px;
   width: 15px;
   margin: auto;

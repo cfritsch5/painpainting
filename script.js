@@ -19,19 +19,26 @@ document.addEventListener("DOMContentLoaded", function() {
   cntx.lineCap = 'round';
   cntx.lineJoin = "round";
   cntx.lineWidth = 15;
-  cntx.strokeStyle = `rgb(255, 0, 0, 0.5)`;
-
-  // line style controls
+  let currentcolor = "red";
   let lineWidth = document.getElementById('lineWidth');
   let intensity = document.getElementById('intensity');
   let linesize = document.getElementById("linesize");
-  lineWidth.addEventListener("input", (e) => { updateLinesize(`rgb(255, 0, 0, ${intensity.value})`); });
-  intensity.addEventListener("input", (e) => { updateLinesize(`rgb(255, 0, 0, ${intensity.value})`); });
-  function updateLinesize(color){
+  function color() {
+    if (currentcolor === "red") { return `rgb(255, ${ 255 * (1-intensity.value)}, ${255 * (1-intensity.value)} )`};
+    if (currentcolor === "erase") {return "rgba(255,255,255)"};
+  } 
+
+  function updateLinesize(newColor){
+    if (newColor) { currentcolor = newColor}
     cntx.lineWidth = lineWidth.value;
-    cntx.strokeStyle = color;
-    linesize.style = `background-color: ${color}; width:${lineWidth.value}px; height:${lineWidth.value}px; opacity: ${intensity.value}`;
+    cntx.strokeStyle = color();
+    linesize.style = `background-color: ${color()}; width:${lineWidth.value}px; height:${lineWidth.value}px;`;
   };
+
+  cntx.strokeStyle = color();
+  lineWidth.addEventListener("input", (e) => { updateLinesize(); });
+  intensity.addEventListener("input", (e) => { updateLinesize(); });
+
 
 
 // draw background body outline
@@ -152,11 +159,13 @@ document.addEventListener("DOMContentLoaded", function() {
 //SAVE
   let savebutton = document.getElementById('savebutton');
   savebutton.addEventListener("click", () => {
+    backgroundcntx.globalAlpha = 0.9;
     backgroundcntx.drawImage(canvas,0,0);
     const link = document.createElement("a");
     link.download = "PainPaintingImage.png";
     link.href = backgroundcanvas.toDataURL();
     link.click();
+    backgroundcntx.globalAlpha = 1; 
     backgroundcntx.drawImage(img, 0, 0,canvas.width, canvas.height); //redraw to clear background img
   });
 
@@ -165,13 +174,13 @@ document.addEventListener("DOMContentLoaded", function() {
   erasebutton.addEventListener("click", ()=>{
     if (erasebutton.checked) {
       cntx.globalCompositeOperation = "destination-out";  
-      cntx.strokeStyle = "rgba(255,255,255,1)";
-      updateLinesize('rgba(255,255,255,1)');
+      updateLinesize("erase");
+      intensity.disabled = true;
     } else {
       cntx.lineWidth = lineWidth.value;
       cntx.globalCompositeOperation = "source-over";  
-      cntx.strokeStyle = `rgb(255, 0, 0, ${intensity.value})`; //reset to regular painting
-      updateLinesize(`rgb(255, 0, 0, ${intensity.value})`);
+      updateLinesize("red");
+      intensity.disabled = false;
     }
 
   });
