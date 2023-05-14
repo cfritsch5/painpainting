@@ -4,11 +4,37 @@ document.addEventListener("DOMContentLoaded", function() {
   let backgroundcanvas = document.getElementById('backgroundcanvas');
   let backgroundcntx = backgroundcanvas.getContext("2d");
   let canvas = document.getElementById('canvas');
-  let context = canvas.getContext("2d");
-  let cntx = context //do this extra step so we can switch canvas we are working on later
+  let cntx = canvas.getContext("2d");
   let legendcanvas = document.getElementById('legendcanvas');
   let legendcntx = legendcanvas.getContext("2d");
   let isPainting = false;
+  let addsymptombutton = document.getElementById('addset');
+  let setcontainer = document.getElementById('setcontainer');
+  let canvascontainer = document.getElementById('canvascontainer');
+  let canvascounter = 0;
+  
+  function createCanvas(params) {
+    canvascounter++;
+    let newlayer = document.createElement('canvas');
+    newlayer.classList.add(`canvas${canvascounter}`, "subcanvas");
+    newlayer.width ="500";
+    newlayer.height ="500";
+    canvascontainer.insertBefore(newlayer,canvas);
+    
+    let newtablabel = document.createElement("label");
+    newtablabel.setAttribute("for",  `forcanvas${canvascounter}`);
+    newtablabel.innerHTML = `Symptom set ${canvascounter}
+      <input class="settab" type="radio" name="layers" checked="checked" id="forcanvas${canvascounter}"> `
+    setcontainer.appendChild(newtablabel);
+
+    let newtab = document.getElementById(`forcanvas${canvascounter}`);
+    newtab.addEventListener("click",()=>{cntx = newlayer.getContext("2d");}); //this gets the encapsulated layer i think - it works at any rate
+
+    cntx = newlayer.getContext("2d");
+  }
+
+  createCanvas()
+  addsymptombutton.addEventListener('click', createCanvas);
 
 // set up variables to store current path and drawing history
   let path = [];
@@ -18,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
   makebetter.src = `images/makebetter.png`;
   makesworse.src = `images/makesworse.png`;
 
-// initializing line style, function, & listeners
+// line style controls
   let lineWidth = document.getElementById('lineWidth');
   let intensity = document.getElementById('intensity');
   let linesize = document.getElementById("linesize");
@@ -168,49 +194,20 @@ document.addEventListener("DOMContentLoaded", function() {
   let savebutton = document.getElementById('savebutton');
   savebutton.addEventListener("click", () => {
     backgroundcntx.globalAlpha = 0.9;
-    backgroundcntx.drawImage(canvas,0,0);
-    backgroundcntx.drawImage(legendcanvas,0,0);
+    let canvases = document.getElementsByClassName("subcanvas");
+
+    for (let i = 0; i < canvascounter; i++) {
+      backgroundcntx.drawImage(canvases[i],0,0);
+    }
+
     const link = document.createElement("a"); // a referes to the type of element created aka <a href> link element
     link.download = "PainPaintingImage.png";
     link.href = backgroundcanvas.toDataURL();
+    link.click();
+
     backgroundcntx.globalAlpha = 1; 
     backgroundcntx.drawImage(img, 0, 0,canvas.width, canvas.height); //redraw to clear background img
-    link.click();
   }); 
-
-
-  //ADD Symptom Set 
-  let addsymptombutton = document.getElementById('addset');
-  let setcontainer = document.getElementById('setcontainer');
-  let canvascontainer = document.getElementById('canvascontainer');
-  let canvascounter = 1;
-  addsymptombutton.addEventListener('click', () => {
-    canvascounter++;
-    let newlayer = document.createElement('canvas');
-    newlayer.classList.add(`canvas${canvascounter}`, "subcanvas");
-    newlayer.width ="500";
-    newlayer.height ="500";
-    canvascontainer.insertBefore(newlayer,canvas);
-
-    let newtab = document.createElement("button");
-    newtab.classList.add("settab");
-    newtab.id = `forcanvas${canvascounter}`;
-    newtab.innerText = `set ${canvascounter}`;
-    setcontainer.appendChild(newtab);
-    newtab.addEventListener("click",()=>{
-      console.log("layer",newlayer);
-      if (erasebutton.checked){
-        erasebutton.checked = false;
-        updateLinesize(); //close the eraser on the current layer
-        cntx = newlayer.getContext("2d"); //this gets encapsulated? it works but not sure good practise
-        erasebutton.checked = true;
-        updateLinesize(); //start eraser on newlayer
-      }
-      cntx = newlayer.getContext("2d"); //this gets encapsulated? it works but not sure good practise
-    })
-    cntx = newlayer.getContext("2d");
-  });
-
 
 
 // main drawing process listeners and functions
@@ -241,8 +238,6 @@ document.addEventListener("DOMContentLoaded", function() {
   function onMove(e) {
     if (isPainting === true) {
       path.push([e.offsetX,e.offsetY]);
-      // cntx.clearRect(0,0,canvas.width,canvas.height)
-      // cntx.putImageData(imgdata.at(-1),0,0);
       drawPath();
     }
   }
@@ -258,8 +253,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
   //drawing triggers functions
   function drawtrigger(e) {
-    legendcntx.lineWidth = 1;
-    legendcntx.strokeStyle = `rgb(0, 0, 0, 1)`;
+    cntx.lineWidth = 1;
+    cntx.strokeStyle = `rgb(0, 0, 0, 1)`;
     path.push([e.offsetX,e.offsetY]);
   }
 
@@ -276,35 +271,35 @@ document.addEventListener("DOMContentLoaded", function() {
     let offset = 20;
     let v = vectorizePath(A,B,offset);
 
-    legendcntx.lineTo(e.offsetX,e.offsetY);
-    legendcntx.beginPath();
-    legendcntx.moveTo(A[0],A[1]);
-    legendcntx.lineTo(B[0],B[1]);
-    legendcntx.stroke();
+    cntx.lineTo(e.offsetX,e.offsetY);
+    cntx.beginPath();
+    cntx.moveTo(A[0],A[1]);
+    cntx.lineTo(B[0],B[1]);
+    cntx.stroke();
     let radius = 10;
-    legendcntx.moveTo(v[0]+radius,v[1]);
+    cntx.moveTo(v[0]+radius,v[1]);
     let triggerspacing = 0;
     for (let key in triggers){
       if (triggers[key][key]=== 'custom' && triggers[key].element.checked) {        
-        legendcntx.font = "16px Arial";
-        legendcntx.fillText(document.getElementById('customtext').value, v[0]-13.5+triggerspacing,v[1]-13.5)
+        cntx.font = "16px Arial";
+        cntx.fillText(document.getElementById('customtext').value, v[0]-13.5+triggerspacing,v[1]-13.5)
       } else {
         if(triggers[key].element.checked) {
 
-          legendcntx.drawImage(triggers[key].icon, v[0]-13.5+triggerspacing,v[1]-13.5,25,25);
+          cntx.drawImage(triggers[key].icon, v[0]-13.5+triggerspacing,v[1]-13.5,25,25);
           triggerspacing = triggerspacing + offset;
 
           if (triggers[key].radiobetter.checked) {
-            legendcntx.drawImage(makebetter, v[0]+triggerspacing-36,v[1]-12,40,40);
+            cntx.drawImage(makebetter, v[0]+triggerspacing-36,v[1]-12,40,40);
           } else if (triggers[key].radioworse.checked) {
-            legendcntx.drawImage(makesworse, v[0]+triggerspacing-36,v[1]-12,40,40);
+            cntx.drawImage(makesworse, v[0]+triggerspacing-36,v[1]-12,40,40);
           }
         } 
           
       };
     };
 
-    legendcntx.stroke();
+    cntx.stroke();
     path = [];
 
     imgdata.push(cntx.getImageData(0,0,canvas.width, canvas.height));
