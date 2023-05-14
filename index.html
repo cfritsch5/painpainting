@@ -47,13 +47,24 @@
       </li>
     </ul>
   </div>
+
+
+
   <div class="mainframe" draggable="false">
-    <div class="canvascontainer">
+
+    <div id="setcontainer">
+      <div>
+        <button title="" type="button" name="" id="addset">add symptom set </button>
+      </div>
+    </div>
+
+    <div id="canvascontainer">
       <canvas id="backgroundcanvas" width="500px" height="500px"></canvas>
       <canvas id="canvas" width="500px" height="500px"></canvas>
-      <canvas id="legendcanvas" width="500px" height="500px"></canvas>
+      <canvas class="subcanvas" id="legendcanvas" width="500px" height="500px"></canvas>
       <img src="images/bodyoutline.png" id="bodyoutline"calt="" class="hiddenimage">
     </div>
+
     <div class="triggertypecontainer">
       <button title="click and drag on image to place legend" type="button" name="trigger" id="trigger">Add label: symptom responds to </button>
       <div id="triggertypes">

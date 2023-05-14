@@ -4,7 +4,8 @@ document.addEventListener("DOMContentLoaded", function() {
   let backgroundcanvas = document.getElementById('backgroundcanvas');
   let backgroundcntx = backgroundcanvas.getContext("2d");
   let canvas = document.getElementById('canvas');
-  let cntx = canvas.getContext("2d");
+  let context = canvas.getContext("2d");
+  let cntx = context //do this extra step so we can switch canvas we are working on later
   let legendcanvas = document.getElementById('legendcanvas');
   let legendcntx = legendcanvas.getContext("2d");
   let isPainting = false;
@@ -18,29 +19,33 @@ document.addEventListener("DOMContentLoaded", function() {
   makesworse.src = `images/makesworse.png`;
 
 // initializing line style, function, & listeners
-  cntx.lineCap = 'round';
-  cntx.lineJoin = "round";
-  cntx.lineWidth = 15;
-  let currentcolor = "red";
   let lineWidth = document.getElementById('lineWidth');
   let intensity = document.getElementById('intensity');
   let linesize = document.getElementById("linesize");
-  function color() {
-    if (currentcolor === "red") { return `rgb(255, ${ 255 * (1-intensity.value)}, ${255 * (1-intensity.value)} )`};
-    if (currentcolor === "erase") {return "rgba(255,255,255)"};
-  } 
+  let erasebutton = document.getElementById('erase');
 
-  function updateLinesize(newColor){
-    if (newColor) { currentcolor = newColor}
+  function updateLinesize(){
+    cntx.lineCap = 'round';
+    cntx.lineJoin = "round";
     cntx.lineWidth = lineWidth.value;
-    cntx.strokeStyle = color();
-    linesize.style = `background-color: ${color()}; width:${lineWidth.value}px; height:${lineWidth.value}px;`;
+
+    if (erasebutton.checked) {
+      cntx.globalCompositeOperation = "destination-out";  
+      intensity.disabled = true;
+    } else {
+      cntx.globalCompositeOperation = "source-over";  
+      intensity.disabled = false;
+    }
+
+    let gbvalue = 255 * (1-intensity.value)
+    let color = erasebutton.checked? "rgb(255,255,255)":`rgb(255, ${gbvalue}, ${gbvalue} )`;
+    cntx.strokeStyle = color;
+    linesize.style = `background-color: ${color}; width:${lineWidth.value}px; height:${lineWidth.value}px;`;
   };
 
-  cntx.strokeStyle = color();
-  lineWidth.addEventListener("input", (e) => { updateLinesize(); });
-  intensity.addEventListener("input", (e) => { updateLinesize(); });
-
+  lineWidth.addEventListener("input", () => { updateLinesize(); });
+  intensity.addEventListener("input", () => { updateLinesize(); });
+  erasebutton.addEventListener("click",() => { updateLinesize(); });
 
 
 // draw background body outline
@@ -171,23 +176,42 @@ document.addEventListener("DOMContentLoaded", function() {
     backgroundcntx.globalAlpha = 1; 
     backgroundcntx.drawImage(img, 0, 0,canvas.width, canvas.height); //redraw to clear background img
     link.click();
+  }); 
+
+
+  //ADD Symptom Set 
+  let addsymptombutton = document.getElementById('addset');
+  let setcontainer = document.getElementById('setcontainer');
+  let canvascontainer = document.getElementById('canvascontainer');
+  let canvascounter = 1;
+  addsymptombutton.addEventListener('click', () => {
+    canvascounter++;
+    let newlayer = document.createElement('canvas');
+    newlayer.classList.add(`canvas${canvascounter}`, "subcanvas");
+    newlayer.width ="500";
+    newlayer.height ="500";
+    canvascontainer.insertBefore(newlayer,canvas);
+
+    let newtab = document.createElement("button");
+    newtab.classList.add("settab");
+    newtab.id = `forcanvas${canvascounter}`;
+    newtab.innerText = `set ${canvascounter}`;
+    setcontainer.appendChild(newtab);
+    newtab.addEventListener("click",()=>{
+      console.log("layer",newlayer);
+      if (erasebutton.checked){
+        erasebutton.checked = false;
+        updateLinesize(); //close the eraser on the current layer
+        cntx = newlayer.getContext("2d"); //this gets encapsulated? it works but not sure good practise
+        erasebutton.checked = true;
+        updateLinesize(); //start eraser on newlayer
+      }
+      cntx = newlayer.getContext("2d"); //this gets encapsulated? it works but not sure good practise
+    })
+    cntx = newlayer.getContext("2d");
   });
 
-  //ERASE 
-  let erasebutton = document.getElementById('erase');
-  erasebutton.addEventListener("click", ()=>{
-    if (erasebutton.checked) {
-      cntx.globalCompositeOperation = "destination-out";  
-      updateLinesize("erase");
-      intensity.disabled = true;
-    } else {
-      cntx.lineWidth = lineWidth.value;
-      cntx.globalCompositeOperation = "source-over";  
-      updateLinesize("red");
-      intensity.disabled = false;
-    }
 
-  });
 
 // main drawing process listeners and functions
   canvas.addEventListener("mousedown",onStart);
@@ -208,6 +232,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   function onStart(e) {
+    updateLinesize();
     isPainting = true;
     path.push([e.offsetX,e.offsetY],[e.offsetX,e.offsetY]); //two points are needed to make canvas's stroke show up for first point
     drawPath();
@@ -216,8 +241,8 @@ document.addEventListener("DOMContentLoaded", function() {
   function onMove(e) {
     if (isPainting === true) {
       path.push([e.offsetX,e.offsetY]);
-      cntx.clearRect(0,0,canvas.width,canvas.height)
-      cntx.putImageData(imgdata.at(-1),0,0);
+      // cntx.clearRect(0,0,canvas.width,canvas.height)
+      // cntx.putImageData(imgdata.at(-1),0,0);
       drawPath();
     }
   }

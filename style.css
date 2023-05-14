@@ -1,4 +1,4 @@
-.canvascontainer {
+#canvascontainer {
   display: grid;
 }
 
@@ -8,7 +8,9 @@ canvas {
   grid-column: 1;
   grid-row: 1;
   cursor: crosshair;
-  opacity: 0.9;
+  /* opacity: 0.9; */
+  width: 500px; 
+  height: 500px;
 }
 
 .mainframe {
@@ -55,18 +57,17 @@ canvas {
   flex-direction: column;
 } 
 
-/* .better,.worse {
-  background-position: center;
-  background-size: cover; 
-  background-repeat: no-repeat;
-  width: 10px;
-  height: 10px;
-} */
-
 .showinstructions {
   display: none;
 }
 
-#legendcanvas {
+.subcanvas {
   pointer-events: none;
 }
+
+/* .settab {
+  width: 50px;
+  height: 12px;
+  background-color: lightgrey;
+  border: 1px solid black;
+} */
