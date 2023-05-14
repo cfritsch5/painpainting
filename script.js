@@ -155,7 +155,8 @@ document.addEventListener("DOMContentLoaded", function() {
     let clearbutton = document.getElementById('clear');
     clearbutton.addEventListener("click", () => {
       imgdata = [imgdata[0]];
-      cntx.putImageData(imgdata.at(-1),0,0);
+      legendcntx.clearRect(0,0,canvas.width,canvas.height);
+      cntx.clearRect(0,0,canvas.width,canvas.height);
     });
 
 //SAVE
@@ -163,12 +164,13 @@ document.addEventListener("DOMContentLoaded", function() {
   savebutton.addEventListener("click", () => {
     backgroundcntx.globalAlpha = 0.9;
     backgroundcntx.drawImage(canvas,0,0);
-    const link = document.createElement("link");
+    backgroundcntx.drawImage(legendcanvas,0,0);
+    const link = document.createElement("a"); // a referes to the type of element created aka <a href> link element
     link.download = "PainPaintingImage.png";
     link.href = backgroundcanvas.toDataURL();
-    link.click();
     backgroundcntx.globalAlpha = 1; 
     backgroundcntx.drawImage(img, 0, 0,canvas.width, canvas.height); //redraw to clear background img
+    link.click();
   });
 
   //ERASE 

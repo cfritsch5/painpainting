@@ -11,11 +11,6 @@ canvas {
   opacity: 0.9;
 }
 
-#backgroundcanvas {
-    /* background-image: url("images/bodyoutline.png"); */
-    background-size: cover;  
-}
-
 .mainframe {
   display: flex;
 }
@@ -60,13 +55,13 @@ canvas {
   flex-direction: column;
 } 
 
-.better,.worse {
-  background-position: center; /* Center the image */
-  background-size: cover; /* Resize the background image to cover the entire container */
-  background-repeat: no-repeat; /* Do not repeat the image */
+/* .better,.worse {
+  background-position: center;
+  background-size: cover; 
+  background-repeat: no-repeat;
   width: 10px;
   height: 10px;
-}
+} */
 
 .showinstructions {
   display: none;
