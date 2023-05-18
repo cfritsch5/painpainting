@@ -15,6 +15,7 @@ canvas {
 
 .mainframe {
   display: flex;
+  flex-direction: column;
 }
 
 .toolbar {
@@ -28,7 +29,7 @@ canvas {
 
 #linesize {
   border-radius: 50%;
-  background-color: rgb(255, 123, 123);
+  background-color: rgb(255, 130, 0);
   height: 15px;
   width: 15px;
   margin: auto;
@@ -49,7 +50,7 @@ canvas {
 
 #triggertypes {
   display: none;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .triggerradio {
@@ -63,10 +64,16 @@ canvas {
 
 .subcanvas {
   pointer-events: none;
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 #setcontainer {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  width: 500px; /* width of canvas */
+  flex-wrap: wrap;
+}
+
+#setcontainer input[type="text"] {
+  width: 100px;
 }

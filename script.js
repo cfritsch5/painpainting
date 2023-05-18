@@ -5,8 +5,6 @@ document.addEventListener("DOMContentLoaded", function() {
   let backgroundcntx = backgroundcanvas.getContext("2d");
   let canvas = document.getElementById('canvas');
   let cntx = canvas.getContext("2d");
-  let legendcanvas = document.getElementById('legendcanvas');
-  let legendcntx = legendcanvas.getContext("2d");
   let isPainting = false;
   let addsymptombutton = document.getElementById('addset');
   let setcontainer = document.getElementById('setcontainer');
@@ -23,18 +21,29 @@ document.addEventListener("DOMContentLoaded", function() {
     
     let newtablabel = document.createElement("label");
     newtablabel.setAttribute("for",  `forcanvas${canvascounter}`);
-    newtablabel.innerHTML = `Symptom set ${canvascounter}
-      <input class="settab" type="radio" name="layers" checked="checked" id="forcanvas${canvascounter}"> `
+    newtablabel.innerHTML = `
+      <input type="text" value="Symptom set ${canvascounter}">
+      <input class="settab" type="radio" name="layers" checked="checked" id="forcanvas${canvascounter}"> 
+      <input class="showlayer" type="checkbox" checked="checked" id="showlayer${canvascounter}">
+      `
     setcontainer.appendChild(newtablabel);
 
     let newtab = document.getElementById(`forcanvas${canvascounter}`);
+    let vis = document.getElementById(`showlayer${canvascounter}`);
     newtab.addEventListener("click",()=>{cntx = newlayer.getContext("2d");}); //this gets the encapsulated layer i think - it works at any rate
-
+    vis.addEventListener("click",()=>{
+      if (vis.checked) {
+        newlayer.style = ""
+      } else {
+        newlayer.style = "display: none;";
+      }
+    })
     cntx = newlayer.getContext("2d");
   }
 
   createCanvas()
   addsymptombutton.addEventListener('click', createCanvas);
+  
 
 // set up variables to store current path and drawing history
   let path = [];
@@ -44,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function() {
   makebetter.src = `images/makebetter.png`;
   makesworse.src = `images/makesworse.png`;
 
-// line style controls
+// line style controls & color handling
   let lineWidth = document.getElementById('lineWidth');
   let intensity = document.getElementById('intensity');
   let linesize = document.getElementById("linesize");
@@ -63,8 +72,11 @@ document.addEventListener("DOMContentLoaded", function() {
       intensity.disabled = false;
     }
 
-    let gbvalue = 255 * (1-intensity.value)
-    let color = erasebutton.checked? "rgb(255,255,255)":`rgb(255, ${gbvalue}, ${gbvalue} )`;
+    let redvalue = intensity.value >= 0.2 ? 255 : 200 + 255 * (intensity.value)
+    let greenvalue = intensity.value < 0.2 ? 255 : 255 * (1-intensity.value)
+    // let gbvalue = 255 * (1-intensity.value)
+    console.log(intensity.value,redvalue,greenvalue);
+    let color = erasebutton.checked? "rgb(255,255,255)":`rgb(${redvalue}, ${greenvalue}, 0 )`;
     cntx.strokeStyle = color;
     linesize.style = `background-color: ${color}; width:${lineWidth.value}px; height:${lineWidth.value}px;`;
   };
@@ -96,21 +108,21 @@ document.addEventListener("DOMContentLoaded", function() {
     triggers[key].icon.src = `images/${key}icon.png`;
     triggers[key].element = document.getElementById(key);
     triggers[key].radio = triggers[key].element.nextElementSibling;
-    triggers[key].radiobetter = document.getElementById(`${key}better`);
-    triggers[key].radioworse = document.getElementById(`${key}worse`);
-    triggers[key].radioworse.addEventListener('change', ()=>{
-      if (triggers[key].radioworse.checked) {
-        // console.log(key, 'better',triggers[key].radiobetter.checked, 'worse',triggers[key].radioworse.checked,);
+    triggers[key].radioBtr = document.getElementById(`${key}better`);
+    triggers[key].radioWrs = document.getElementById(`${key}worse`);
+    triggers[key].radioWrs.addEventListener('change', ()=>{
+      if (triggers[key].radioWrs.checked) {
+        // console.log(key, 'better',triggers[key].radioBtr.checked, 'worse',triggers[key].radioWrs.checked,);
       }
     });
-    triggers[key].radiobetter.addEventListener('change', ()=>{
-      if (triggers[key].radiobetter.checked){
-        // console.log(key, 'better',triggers[key].radiobetter.checked, 'worse',triggers[key].radioworse.checked,);
+    triggers[key].radioBtr.addEventListener('change', ()=>{
+      if (triggers[key].radioBtr.checked){
+        // console.log(key, 'better',triggers[key].radioBtr.checked, 'worse',triggers[key].radioWrs.checked,);
       } 
     });
     triggers[key].element.addEventListener('click', ()=>{
       if ( triggers[key].element.checked){
-        triggers[key].radio.style.display = 'contents';
+        triggers[key].radio.style.display = 'flex';
       } else {
         triggers[key].radio.style.display = 'none';
       };
@@ -126,8 +138,8 @@ document.addEventListener("DOMContentLoaded", function() {
     
     canvas.addEventListener('mousedown', drawtrigger);
     canvas.addEventListener('touchstart', drawtrigger);
-    canvas.addEventListener("mouseup", triggerstamp);
-    canvas.addEventListener("touchend", triggerstamp);
+    canvas.addEventListener("mouseup", stamptrigger);
+    canvas.addEventListener("touchend", stamptrigger);
 
     triggertypebox.style.display = "flex"; //to make it not hidden
     triggerbutton.style.display = "none";
@@ -139,10 +151,10 @@ document.addEventListener("DOMContentLoaded", function() {
     triggertypebox.style = 'display: none';
     triggerbutton.style.display = "initial";
 
-    canvas.removeEventListener("mouseup", triggerstamp);
-    canvas.removeEventListener("touchend", triggerstamp);
     canvas.removeEventListener('mousedown', drawtrigger);
     canvas.removeEventListener('touchstart', drawtrigger);
+    canvas.removeEventListener("mouseup", stamptrigger);
+    canvas.removeEventListener("touchend", stamptrigger);
     canvas.addEventListener("mousedown",onStart);
     canvas.addEventListener("touchstart",onStart);
 
@@ -159,17 +171,17 @@ document.addEventListener("DOMContentLoaded", function() {
   })
 
   //show & hide instructions
-  let instructions = document.getElementById('showinstructiondisplay');
-  let instructionsbutton = document.getElementById('showinstructionsbutton');
-  instructionsbutton.addEventListener('click', ()=>{
-    instructions.style = 'display: contents';
-    instructionsbutton.style = 'display: none;'
-  });
-  let hidebutton = document.getElementById('hideinstructions');
-  hidebutton.addEventListener('click',()=>{
-    instructions.style = 'display: none';
-    instructionsbutton.style = 'display: initial;'
-  })
+  // let instructions = document.getElementById('showinstructiondisplay');
+  // let instructionsbutton = document.getElementById('showinstructionsbutton');
+  // instructionsbutton.addEventListener('click', ()=>{
+  //   instructions.style = 'display: contents';
+  //   instructionsbutton.style = 'display: none;'
+  // });
+  // let hidebutton = document.getElementById('hideinstructions');
+  // hidebutton.addEventListener('click',()=>{
+  //   instructions.style = 'display: none';
+  //   instructionsbutton.style = 'display: initial;'
+  // })
 
 // action controls
 // UNDO
@@ -186,7 +198,6 @@ document.addEventListener("DOMContentLoaded", function() {
     let clearbutton = document.getElementById('clear');
     clearbutton.addEventListener("click", () => {
       imgdata = [imgdata[0]];
-      legendcntx.clearRect(0,0,canvas.width,canvas.height);
       cntx.clearRect(0,0,canvas.width,canvas.height);
     });
 
@@ -264,39 +275,43 @@ document.addEventListener("DOMContentLoaded", function() {
     return [B[0]+offset*u[0],B[1]+offset*u[1]];
   }
 
-  function triggerstamp(e) {
+  function stamptrigger(e) {
     path.push([e.offsetX,e.offsetY]);
     let A = path[0];
     let B = path[1];
+    if (A[0]==B[0] && A[1]==B[1]){
+      B = [B[0]+1,B[1]+1]
+      // hacky way to make stamp show up if only click on canvas not draw line
+      // probably a better way to do this but it works for now. sorry future me
+    };
     let offset = 20;
     let v = vectorizePath(A,B,offset);
 
-    cntx.lineTo(e.offsetX,e.offsetY);
-    cntx.beginPath();
-    cntx.moveTo(A[0],A[1]);
-    cntx.lineTo(B[0],B[1]);
-    cntx.stroke();
+    drawPath();
+    // cntx.lineTo(e.offsetX,e.offsetY);
+    // cntx.beginPath();
+    // cntx.moveTo(A[0],A[1]);
+    // cntx.lineTo(B[0],B[1]);
+    // cntx.stroke();
     let radius = 10;
     cntx.moveTo(v[0]+radius,v[1]);
     let triggerspacing = 0;
+    let thumboffset = -13.5;
+    let thumb = makesworse;
     for (let key in triggers){
-      if (triggers[key][key]=== 'custom' && triggers[key].element.checked) {        
-        cntx.font = "16px Arial";
-        cntx.fillText(document.getElementById('customtext').value, v[0]-13.5+triggerspacing,v[1]-13.5)
-      } else {
-        if(triggers[key].element.checked) {
-
-          cntx.drawImage(triggers[key].icon, v[0]-13.5+triggerspacing,v[1]-13.5,25,25);
-          triggerspacing = triggerspacing + offset;
-
-          if (triggers[key].radiobetter.checked) {
-            cntx.drawImage(makebetter, v[0]+triggerspacing-36,v[1]-12,40,40);
-          } else if (triggers[key].radioworse.checked) {
-            cntx.drawImage(makesworse, v[0]+triggerspacing-36,v[1]-12,40,40);
+      if(triggers[key].element.checked) {
+          if (triggers[key][key]=== 'custom') {        
+            cntx.font = "12px Arial";
+            cntx.fillText(document.getElementById('customtext').value, v[0]+triggerspacing,v[1])
+          } else {
+            cntx.drawImage(triggers[key].icon, v[0]+thumboffset+triggerspacing,v[1]+thumboffset,25,25);
           }
-        } 
           
-      };
+          triggerspacing = triggerspacing + offset;
+          
+          triggers[key].radioBtr.checked? thumb = makebetter : thumb = makesworse;
+          cntx.drawImage(thumb, v[0]+triggerspacing-36,v[1]-12,40,40);
+        }
     };
 
     cntx.stroke();
